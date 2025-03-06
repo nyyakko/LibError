@@ -15,8 +15,13 @@ endif()
 # set(LibError_LinkerOptions ${LibError_LinkerOptions})
 
 CPMAddPackage("gh:fmtlib/fmt#10.2.1")
-CPMAddPackage("gh:nyyakko/expected#35de9a0")
 
-set(LibError_ExternalLibraries fmt::fmt expected::expected)
+CPMFindPackage(
+    NAME expected
+    GITHUB_REPOSITORY nyyakko/expected
+    GIT_TAG master
+)
+
+set(LibError_ExternalLibraries fmt::fmt tl::expected)
 
 add_subdirectory(LibError)

@@ -20,7 +20,7 @@ target_link_libraries(CoolProject PRIVATE LibError::LibError)
 
 # examples
 ```c++
-#include <liberror/ErrorOr.hpp>
+#include <liberror/Result.hpp>
 
 #include <string>
 #include <print>
@@ -28,7 +28,7 @@ target_link_libraries(CoolProject PRIVATE LibError::LibError)
 #include <sstream>
 #include <filesystem>
 
-liberror::ErrorOr<std::string> read_file_contents(std::filesystem::path path)
+liberror::Result<std::string> read_file_contents(std::filesystem::path path)
 {
     std::ifstream fileStream { path };
 
@@ -52,7 +52,7 @@ int main()
 ```
 
 ```c++
-#include <liberror/ErrorOr.hpp>
+#include <liberror/Result.hpp>
 
 #include <string>
 #include <print>
@@ -60,7 +60,7 @@ int main()
 #include <sstream>
 #include <filesystem>
 
-liberror::ErrorOr<std::string> read_file_contents(std::filesystem::path path)
+liberror::Result<std::string> read_file_contents(std::filesystem::path path)
 {
     std::ifstream fileStream { path };
 
@@ -75,7 +75,7 @@ liberror::ErrorOr<std::string> read_file_contents(std::filesystem::path path)
     return contentStream.str();
 }
 
-liberror::ErrorOr<void> print_file_contents(std::filesystem::path path)
+liberror::Result<void> print_file_contents(std::filesystem::path path)
 {
     // if the function fails, the error is pushed up into the call stack to be handled somewhere else.
     auto const contents = TRY(read_file_contents("some_cool_file.txt"));

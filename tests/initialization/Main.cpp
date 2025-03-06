@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <liberror/ErrorOr.hpp>
+#include <liberror/Result.hpp>
 
 #include <fmt/format.h>
 
@@ -55,8 +55,8 @@ TEST(initialization, explicit_with_in_place_construction)
     // cppcheck-suppress unreadVariable
     auto const previousState = redirect_stdout_to_buffer(buffer);
     {
-        auto result = [] -> ErrorOr<S> {
-            ErrorOr<S> temp { "hello"s };
+        auto result = [] -> Result<S> {
+            Result<S> temp { "hello"s };
             return temp;
         }();
     }
@@ -70,8 +70,8 @@ TEST(initialization, explicit_with_in_place_construction_while_checking_for_inte
     // cppcheck-suppress unreadVariable
     auto const previousState = redirect_stdout_to_buffer(buffer);
     {
-        auto result = [] -> ErrorOr<S> {
-            ErrorOr<S> temp { "hello" };
+        auto result = [] -> Result<S> {
+            Result<S> temp { "hello" };
             auto const& value = temp.value();
             if (value.value_m != "hello"s) return make_error("failure");
             return temp;
@@ -87,7 +87,7 @@ TEST(initialization, implicit_with_in_place_construction)
     // cppcheck-suppress unreadVariable
     auto const previousState = redirect_stdout_to_buffer(buffer);
     {
-        auto result = [] -> ErrorOr<S> {
+        auto result = [] -> Result<S> {
             return "hello";
         }();
     }
@@ -101,7 +101,7 @@ TEST(initialization, no_extra_object_failure)
     std::array<char, BUFFER_SIZE> buffer {};
     // cppcheck-suppress unreadVariable
     auto const previousState = redirect_stdout_to_buffer(buffer);
-    auto const result = [] -> ErrorOr<S> {
+    auto const result = [] -> Result<S> {
         return make_error("failure");
     }();
     fmt::println("{}", result.error().message());

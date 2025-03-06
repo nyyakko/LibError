@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <liberror/ErrorOr.hpp>
+#include <liberror/Result.hpp>
 
 #include <fmt/format.h>
 
@@ -49,7 +49,7 @@ void restore_stdout(int state)
 
 TEST(runtime, no_error)
 {
-    auto result = [] () -> ErrorOr<std::string_view> {
+    auto result = [] () -> Result<std::string_view> {
         return "69420";
     }();
 
@@ -58,7 +58,7 @@ TEST(runtime, no_error)
 
 TEST(runtime, single_error)
 {
-    auto result = [] () -> ErrorOr<std::string> {
+    auto result = [] () -> Result<std::string> {
         return make_error("error");
     }();
 
@@ -67,8 +67,8 @@ TEST(runtime, single_error)
 
 TEST(runtime, multiple_error_lvalue)
 {
-    auto result = [] () -> ErrorOr<std::string> {
-        auto error = [] () -> ErrorOr<std::string> {
+    auto result = [] () -> Result<std::string> {
+        auto error = [] () -> Result<std::string> {
             return make_error("first error {}", 69);
         }();
         if (!error.has_value()) return make_error(error.error());
@@ -80,8 +80,8 @@ TEST(runtime, multiple_error_lvalue)
 
 TEST(runtime, multiple_error_rvalue)
 {
-    auto result = [] () -> ErrorOr<std::string> {
-        auto fnMakeError = [] () -> ErrorOr<std::string> {
+    auto result = [] () -> Result<std::string> {
+        auto fnMakeError = [] () -> Result<std::string> {
             return make_error("first error {}", 69);
         };
         return make_error(fnMakeError().error());
@@ -95,9 +95,9 @@ TEST(runtime, assignment_operator)
     std::array<char, BUFFER_SIZE> buffer {};
     auto const previousState = redirect_stdout_to_buffer(buffer);
     {
-        auto value = [] () -> ErrorOr<S> {
+        auto value = [] () -> Result<S> {
             using namespace std::literals;
-            ErrorOr<S> value { ""s };
+            Result<S> value { ""s };
             return value;
         }();
     }

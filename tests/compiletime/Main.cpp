@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include <liberror/ErrorOr.hpp>
+
+#include <liberror/Result.hpp>
 
 #include <fmt/format.h>
 
@@ -22,7 +23,7 @@ struct S
 };
 
 #ifdef __cpp_lib_expected
-consteval ErrorOr<size_t> inspect_string(std::string_view input, size_t current = 0)
+consteval Result<size_t> inspect_string(std::string_view input, size_t current = 0)
 {
     size_t index = current;
 
@@ -55,7 +56,7 @@ TEST(compile_time, inspect_string_failure)
 
 TEST(compile_time, convert_to_string_implicitly)
 {
-    auto constexpr result = [] () constexpr -> ErrorOr<std::string_view> {
+    auto constexpr result = [] () constexpr -> Result<std::string_view> {
         return "69420";
     }();
 
@@ -65,7 +66,7 @@ TEST(compile_time, convert_to_string_implicitly)
 
 TEST(compile_time, convert_to_pair_implicitly)
 {
-    auto constexpr result = [] () -> ErrorOr<std::pair<int, std::string_view>> {
+    auto constexpr result = [] () -> Result<std::pair<int, std::string_view>> {
         return std::pair { 69, "420" };
     }();
 
@@ -75,7 +76,7 @@ TEST(compile_time, convert_to_pair_implicitly)
 
 TEST(compile_time, non_default_error_type_success)
 {
-    auto constexpr result = [] () -> ErrorOr<std::string_view, TraceError> {
+    auto constexpr result = [] () -> Result<std::string_view, TraceError> {
         return "69420";
     }();
 
@@ -86,15 +87,15 @@ TEST(compile_time, non_default_error_type_success)
 
 TEST(compile_time, return_move_only_type)
 {
-    auto value = [] () -> ErrorOr<std::unique_ptr<int>> {
-        ErrorOr<std::unique_ptr<int>> pointer { new int(1) };
+    auto value = [] () -> Result<std::unique_ptr<int>> {
+        Result<std::unique_ptr<int>> pointer { new int(1) };
         return pointer;
     }().value();
 }
 
 TEST(compile_time, return_void_type)
 {
-    [[maybe_unused]] auto value = [] () -> ErrorOr<void> {
+    [[maybe_unused]] auto value = [] () -> Result<void> {
         return {};
     }().value();
 }
