@@ -1,5 +1,4 @@
 function(enable_tests PROJECT)
-
     if (NOT ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
         message(STATUS "[${PROJECT}] running on ${CMAKE_HOST_SYSTEM_NAME}, sanitizers for tests are enabled.")
         set(LibError_TestsLinkerOptions ${LibError_TestsLinkerOptions} -fsanitize=undefined,leak,address)
@@ -22,5 +21,4 @@ function(enable_tests PROJECT)
 
     enable_testing()
     add_subdirectory(tests)
-
 endfunction()

@@ -3,6 +3,8 @@ add_subdirectory(include/liberror)
 add_library(${PROJECT_NAME} INTERFACE ${LibError_HeaderFiles})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME} PREFIX "")
+
 if (ENABLE_CLANGTIDY)
     enable_clang_tidy(${PROJECT_NAME})
 endif()
