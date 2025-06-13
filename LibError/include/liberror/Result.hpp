@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include <variant>
 
 #ifndef __cpp_lib_print
 #include <fmt/format.h>
@@ -41,10 +42,8 @@ concept error_policy_concept = requires (T error, T::message_t)
     error.message();
 };
 
-struct Void {};
-
 template <class T, error_policy_concept ErrorPolicy = error::Default>
-using Result = LIBERROR_EXP::expected<std::conditional_t<std::is_void_v<T>, Void, T>, ErrorPolicy>;
+using Result = LIBERROR_EXP::expected<std::conditional_t<std::is_void_v<T>, std::monostate, T>, ErrorPolicy>;
 
 template <error_policy_concept ErrorPolicy = error::Default>
 constexpr auto make_error(typename ErrorPolicy::message_t message, auto&&... arguments)
