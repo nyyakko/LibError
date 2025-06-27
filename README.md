@@ -23,7 +23,7 @@ target_link_libraries(CoolProject PRIVATE LibError::LibError)
 #include <liberror/Result.hpp>
 
 #include <string>
-#include <print>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
@@ -43,11 +43,29 @@ liberror::Result<std::string> read_file_contents(std::filesystem::path path)
     return contentStream.str();
 }
 
+liberror::Result<void> print_file_contents(std::filesystem::path path)
+{
+    // if the function fails, the program stops execution and prints the error.
+    auto const contents = MUST(read_file_contents("some_cool_file.txt"));
+
+    std::cout << "reading: {}" << path.string() << '\n';
+    std::cout << "size in bytes: {}" << contents.size() << '\n';
+    std::cout << "{}" << contents << '\n';
+
+    return {}; // this is how you return from void
+}
+
 int main()
 {
-    // if the function fails, the program execution ends an error message is given.
-    auto const contents = MUST(read_file_contents("some_cool_file.txt"));
-    std::println("{}", contents);
+    auto result = print_file_contents("some_cool_file.txt");
+
+    if (!result.has_value())
+    {
+        std::cerr << result.error().message() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 ```
 
@@ -55,7 +73,7 @@ int main()
 #include <liberror/Result.hpp>
 
 #include <string>
-#include <print>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
@@ -80,16 +98,24 @@ liberror::Result<void> print_file_contents(std::filesystem::path path)
     // if the function fails, the error is pushed up into the call stack to be handled somewhere else.
     auto const contents = TRY(read_file_contents("some_cool_file.txt"));
 
-    std::println("reading: {}", path.string());
-    std::println("size in bytes: {}", contents.size());
-    std::println("{}", contents);
+    std::cout << "reading: {}" << path.string() << '\n';
+    std::cout << "size in bytes: {}" << contents.size() << '\n';
+    std::cout << "{}" << contents << '\n';
 
     return {}; // this is how you return from void
 }
 
 int main()
 {
-    MUST(print_file_contents("some_cool_file.txt"));
+    auto result = print_file_contents("some_cool_file.txt");
+
+    if (!result.has_value())
+    {
+        std::cerr << result.error().message() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 ```
 
