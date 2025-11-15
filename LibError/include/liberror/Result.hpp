@@ -29,7 +29,7 @@ class [[nodiscard]] Default;
 }
 
 template <class T>
-concept error_policy_concept = requires (T error, T::message_t)
+concept error_policy_concept = requires (T error, T::error_t)
 {
     std::is_constructible_v<T, std::string_view>;
     std::is_move_constructible_v<T>;
@@ -46,7 +46,7 @@ template <class T, error_policy_concept ErrorPolicy = error::Default>
 using Result = LIBERROR_EXP::expected<std::conditional_t<std::is_void_v<T>, std::monostate, T>, ErrorPolicy>;
 
 template <error_policy_concept ErrorPolicy = error::Default>
-constexpr auto make_error(typename ErrorPolicy::message_t message, auto&&... arguments)
+constexpr auto make_error(typename ErrorPolicy::error_t message, auto&&... arguments)
 {
     if constexpr (sizeof...(arguments))
         return LIBERROR_EXP::unexpected<ErrorPolicy>(LIBERROR_FMT::vformat(message, LIBERROR_FMT::make_format_args(arguments...)));
@@ -69,11 +69,11 @@ constexpr auto make_error(ErrorPolicy& error) noexcept
 class [[nodiscard]] error::Default
 {
 public:
-    using message_t = std::string_view;
+    using error_t = std::string_view;
 
     constexpr explicit Default(std::string_view message) : message_m { message } {}
 
-    constexpr  Default() noexcept = default;
+    constexpr Default() noexcept = default;
     constexpr ~Default() noexcept = default;
 
     constexpr Default(Default const& error) : message_m { error.message_m } {}
