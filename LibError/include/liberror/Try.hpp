@@ -9,7 +9,7 @@
 #define TRY(expression) ({                                                                   \
     using namespace liberror;                                                                \
     auto&& _ = (expression);                                                                 \
-    if (!_.has_value()) return make_error(_.error());                                        \
+    if (!_.has_value()) return make_error(_.error().message());                              \
     std::move(_).value();                                                                    \
 })
 
